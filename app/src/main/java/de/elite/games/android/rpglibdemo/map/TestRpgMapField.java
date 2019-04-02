@@ -1,10 +1,8 @@
 package de.elite.games.android.rpglibdemo.map;
 
-
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.Log;
 
 import de.elite.games.android.rpglibdemo.mapdata.TestRpgMapFieldData;
 import de.elite.games.drawlib.Point;
@@ -13,7 +11,7 @@ import de.frank.martin.games.rpgguilib.map.RpgMapField;
 
 public class TestRpgMapField extends RpgMapField<TestRpgMapFieldData, TestRpgMapField, TestRpgMapEdge, TestRpgMapNode> {
 
-    private final Paint linePaint = new Paint();
+    private final Paint polygonPaint = new Paint();
     private final Paint pointPaint = new Paint();
 
 
@@ -23,23 +21,21 @@ public class TestRpgMapField extends RpgMapField<TestRpgMapFieldData, TestRpgMap
 
     @Override
     public void draw(Object graphics) {
-//        Color color =
-//                getData().isMarkedAsPath() ? Color.YELLOW :
-//                        getData().isDeadEnd() ? Color.LIGHTGRAY :
-//                                getData().isBlocked() ? Color.DARKGRAY : Color.WHITE;
-//
-//        GraphicsContext gc = (GraphicsContext) graphics;
+        int[] color =
+                getData().isMarkedAsPath() ? new int[]{0xFF, 0xFF, 0x00} :
+                        getData().isDeadEnd() ? new int[]{0xCC, 0xCC, 0xCC} :
+                                getData().isBlocked() ? new int[]{0x99, 0x99, 0x99} : new int[]{0xFF, 0xFF, 0xFF};
 
-        linePaint.setARGB(0xFF,0xFF,0x66,0xFF);
-        linePaint.setStyle(Paint.Style.FILL);
-        linePaint.setStrokeWidth(3);
+        polygonPaint.setARGB(0xFF, color[0], color[1], color[2]);
+
+        polygonPaint.setStyle(Paint.Style.FILL);
+        polygonPaint.setStrokeWidth(3);
 
         pointPaint.setARGB(0xFF,0,0,0xFF);
         pointPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         pointPaint.setStrokeWidth(3);
 
         Canvas canvas = (Canvas) graphics;
-//        gc.setFill(color);
         Shape shape = getShape().getTransformed();
         int amount = shape.getPoints().size();
         Path wallPath = new Path();
@@ -50,28 +46,12 @@ public class TestRpgMapField extends RpgMapField<TestRpgMapFieldData, TestRpgMap
         }
         wallPath.lineTo((float)shape.getPoints().get(0).getX(), (float)shape.getPoints().get(0).getY());
 
-        canvas.drawPath(wallPath, linePaint);
+        canvas.drawPath(wallPath, polygonPaint);
         canvas.drawPoint((float)shape.getCenter().getX(),(float)shape.getCenter().getY(), pointPaint);
 
-//        gc.fillPolygon(xs, ys, amount);
         for (TestRpgMapEdge e : getEdges()) {
             e.draw(graphics);
         }
-//        for (TestRpgMapNode n : getNodes()) {
-//            n.draw(graphics);
-//        }
-//
-//        gc.setLineWidth(1);
-//        gc.setStroke(Color.GREEN);
-//
-//        if (!getData().isBlocked()) {
-//
-//            String text = "" + getData().getCounter();
-//            double width = Toolkit.getToolkit().getFontLoader().computeStringWidth(text, gc.getFont());
-//            double height = Toolkit.getToolkit().getFontLoader().getFontMetrics(gc.getFont()).getDescent();
-//            gc.setStroke(Color.MISTYROSE);
-//            gc.strokeText(text, shape.getCenter().getX() - width / 2, shape.getCenter().getY() + height);
-//        }
     }
 
 }
